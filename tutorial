@@ -1,0 +1,50 @@
+TUTORIAL DE USO:
+1) CRIAR CREDENCIAIS DE ACESSO AO DATABASE.
+-------------------------------------------
+Criar o arquivo <raiz>/app/Db/db-credentials.json
+
+Inserir os dados:
+{
+    "host": "localhost",
+    "dbname": "database",
+    "user": "username",
+    "pass": "password"
+}
+
+
+2) CRIAR ARQUIVO COM OS ESQUEMAS DE TABELAS/ENTIDADES
+------------------------------------------------------
+Criar o arquivo <raiz>/app/schema.json
+OBS: Este esquema, é utilizado para criar tanto as tabelas MySQL, 
+quanto as classes PHP dentro de app/Entity.
+
+{
+  "tables": {
+    "User": {
+      "id": "INT AUTO_INCREMENT PRIMARY KEY",
+      "username": "VARCHAR(50) NOT NULL",
+      "password": "VARCHAR(255) NOT NULL",
+      "email": "VARCHAR(100) NOT NULL"
+    },
+    "Book": {
+      "id": "INT AUTO_INCREMENT PRIMARY KEY",
+      "title": "VARCHAR(255) NOT NULL",
+      "book_id": "INT NOT NULL",
+      "published_date": "DATE"
+    },
+    "Author": {
+      "id": "INT AUTO_INCREMENT PRIMARY KEY",
+      "name": "VARCHAR(255) NOT NULL"
+    }
+  }
+}
+
+
+3) EXECUTAR SCRIPT DE CRIAÇÃO DE TABELAS/CLASSES ENTIDADES
+-----------------------------------------------------------
+php app/generate-v2.php
+
+4) TESTAR COM APLICAÇÃO DE TESTE main.php / mainGUI.php
+-----------------------------------------------------------
+Rodar estas apps no navegador
+

@@ -1,0 +1,57 @@
+{
+  "tables": {
+"DadosClinicos" 	: 		 {
+	"id" 		  			 : "int NOT NULL AUTO_INCREMENT",
+	"paciente_id" 			 : "int DEFAULT NULL",
+	"doencas_preexistentes"  : "text",
+	"cirurgias" 			 : "text",
+	"alergias" 				 : "text",
+	"medicacoes_em_uso" 	 : "text",
+	"fuma" 					 : "int DEFAULT NULL",
+	"bebe" 					 : "int DEFAULT NULL",
+	"drogas" 				 : "text",
+	"historico_familiar" 	 : "text",
+	"historico_psiquiatrico" : "text",
+	"ideacoes_suicidas"      : "text",
+	"num_tentativas_suicidio": "int DEFAULT NULL",
+},
+
+"FormacaoProfissional" : 	{
+	"id" 					: "int NOT NULL AUTO_INCREMENT",
+	"usuario_id" 			: "int DEFAULT NULL"		   ,
+	"instituicao" 			: "varchar(255) NOT NULL",
+	"curso" 				: "varchar(255) NOT NULL",
+	"ano_conclusao" 		: "year NOT NULL",
+	"abordagem_psicologia1" : "varchar(255) DEFAULT NULL",
+	"abordagem_psicologia2" : "varchar(255) DEFAULT NULL",
+	"abordagem_psicologia3" : "varchar(255) DEFAULT NULL",
+	"especialidade1" 		: "varchar(255) DEFAULT NULL",
+	"especialidade2" 		: "varchar(255) DEFAULT NULL",
+	"especialidade3" 		: "varchar(255) DEFAULT NULL" 
+},
+  
+"Tratamento" : 	     {	
+	"id" 		  	 : "int NOT NULL AUTO_INCREMENT",
+	"paciente_id" 	 : "int DEFAULT NULL",
+	"profissional_id": "int DEFAULT NULL",
+	"descricao" 	 : "text NOT NULL",
+	"data_inicio" 	 : "date NOT NULL",
+	"data_fim" 		 : "date DEFAULT NULL",
+	"status" 		 : "text",
+},
+  
+"Usuario" : 		{
+	"id" 	    	: "int NOT NULL AUTO_INCREMENT",
+	"nome" 	    	: "varchar(255) NOT NULL",
+	"email"     	: "varchar(190) NOT NULL",
+	"senha"     	: "varchar(255) NOT NULL",
+	"rua" 	    	: "varchar(255) DEFAULT NULL",
+	"bairro"    	: "varchar(255) DEFAULT NULL",
+	"municipio" 	: "varchar(255) NOT NULL",
+	"uf" 			: "varchar(3) NOT NULL",
+	"profissao" 	: "varchar(50) DEFAULT NULL",
+	"tipo" 		 	: "enum('medico','psicologo','paciente') NOT NULL",
+	"data_registro" : "timestamp NULL DEFAULT CURRENT_TIMESTAMP",
+}
+}
+}

@@ -1,0 +1,176 @@
+1) Consulta Usuário
+-----------------------------------------
+{
+"data":
+{
+	"entity":"usuarios",
+	"operation":"consultar",
+	"object":{
+		   "nome": "Givaldo Medeiros IdI", "email": "sss@gmail.com" 
+	}
+  }
+}
+
+2) Cadastrar Usuário
+-----------------------------------------
+{
+"data":
+{
+	"entity":"usuarios",
+	"operation":"cadastrar",
+	"object":{
+		"nome": "Givaldo Medeiros IdI", "email": "sss@gmail.com", "senha": "abc123", "rua": "R. Jagua OK",  "bairro": "Jaguaribe", "municipio":" ", "uf": " ", "profissao": "professor", "tipo": "paciente" 
+	}
+  }
+}
+
+
+
+3) Atualizar Usuário
+-----------------------------------------
+{
+"data":
+{
+	"entity":"usuarios",
+	"operation":"cadastrar",
+	"object":{
+		"nome": "Givaldo Medeiros IdI", "email": "sss@gmail.com", "senha": "abc123", "rua": "R. Jagua OK",  "bairro": "Jaguaribe", "municipio":" ", "uf": " ", "profissao": "professor", "tipo": "paciente" 
+	}
+  }
+}
+
+
+
+4) Deletar Usuário
+-----------------------------------------
+{
+"data":
+{
+	"entity":"usuarios",
+	"operation":"deletar",
+	"object":{
+        "id":"4", "nome": "Bruno Gustavo"
+	}
+  }
+}
+
+
+4) Registrar Usuário Tipo Profissional
+------------------------------------------------------------------
+// Obs: O id pode ir "zerado", pois a ele, será atribuído um valor
+{
+    "data": {
+        "entity": "usuarios",
+        "operation": "registrar",
+        "object": {
+            "nome": "Deeed sss 111",
+			"email": "teffste@gmail.com",
+			"senha": "abc234",
+            "tipo": "medico",
+            "crm_crp": "112233"
+        }
+    }
+}
+
+5) Cadastrar Profissional
+-------------------------------------------------------------------
+{
+"data": {
+	"entity":"profissional",
+	"operation": "cadastrar",
+	"object" : 	     {
+		"keys" : 	     {
+			"nome" : "Administrador" /* Esse valor deve existir em Usuários previamente cadastrados. */
+		},
+        "profissional" :  {
+            "instituicao" : "IFPB",
+            "curso"		  : "Psicologia",
+            "ano_conclusao" : "2010",
+            "abordagem_psicologia1" : "Transpessoal 1",
+            "abordagem_psicologia2" : "Junguiana",
+            "abordagem_psicologia3" : " ",
+            "especialidade1" : " ",
+            "especialidade2" : " ",
+            "especialidade3" : " ",
+            "valor_consulta" : "660"
+        }
+	}
+}
+}
+
+
+
+6) Cadastrar Prontuário do Paciente Completo 
+--------------------------------------------------------
+{
+"data":
+{
+	"entity":"prontuarioPaciente",
+	"operation":"cadastrar",
+	"object":{
+		"usuario": {
+			"nome": "Ana Laryssa", 
+			"genero":"Masculino",
+			"email": "ew@gmail.com", 
+			"senha": "abc123", 
+			"rua": "R. Jagua OK",  
+			"bairro": "Jaguaribe", 
+			"celular": "83996121818", 
+			"dataNascimento":"1996-01-01", 
+			"municipio":" ", 
+			"uf": " ", 
+			"profissao": "professor", 
+			"tipo": "paciente" 
+		},
+		"dadosClinicos": {
+			"pacienteId" : "2",
+			"doencasPreexistentes": "Diabetes, Bipolaridade",
+			"cirurgias": "Fimose",
+			"alergias": "Dipirona, buscopan",
+			"medicacoesEmUso": "Depakote, Quetiapina",
+			"fuma": "0",
+			"bebe": "0",
+			"drogas": "Maconha",
+			"historicoFamiliar": "Sem históricos",
+			"historicoPsiquiatrico": "Sem histórico",
+			"ideacoesSuicidas": "nenhuma",
+			"numTentativasSuicidio": "0"
+		}
+	}
+  }
+}
+
+
+7) CADASTRAR DADOS DE PROFISSIONAL DE UM USUARIO PRÉ-CADASTRADO.
+----------------------------------------------------------------
+
+{
+"data": {
+	"entity":"contaProfissional",
+	"operation": "cadastrar",
+	"object" : 	     {
+		"keys" : 	     {
+			"nome" : "DIGAO"
+		},
+		"usuario":  {
+			"telefone": "123123",
+			"celular": "123123",
+			"municipio": "João Pessoa",
+			"uf": "PB",
+			"dataNascimento": "2014-01-01",
+			"genero": "Masculino"
+		},
+        "profissional" :  {
+            "instituicao" : "UFPB",
+            "curso"		  : "Medicina",
+            "anoConclusao" : "2010",
+            "abordagemPsicologia1" : "Transpessoal",
+            "abordagemPsicologia2" : " ",
+            "abordagemPsicologia3" : " ",
+            "especialidade" : " ",
+            "valorConsulta" : "660"
+        }
+	}
+}
+}
+

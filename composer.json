@@ -1,0 +1,11 @@
+{
+  "name":"paiva/mindflow",
+  "autoload": {
+    "psr-4":  {
+        "App\\":"app/"
+    }
+  },
+  "require": {
+    "phpmailer/phpmailer": "^6.9"
+  }
+}

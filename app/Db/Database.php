@@ -1,160 +1,105 @@
 <?php
-
 namespace App\Db;
-
 use \PDO;
 use \PDOException;
 
-class Database{
-
-  /**
-   * Host de conexão com o banco de dados
-   * @var string
-   */
-  const HOST = 'db';
-
-  /**
-   * Nome do banco de dados
-   * @var string
-   */
-  const NAME = 'wdev_vagas';
-
-  /**
-   * Usuário do banco
-   * @var string
-   */
-  const USER = 'root';
-
-  /**
-   * Senha de acesso ao banco de dados
-   * @var string
-   */
-  const PASS = 'toor';
-
-  /**
-   * Nome da tabela a ser manipulada
-   * @var string
-   */
+class Database    
+{
+  private static $instance = null;
+  private $connection;
   private $table;
 
-  /**
-   * Instancia de conexão com o banco de dados
-   * @var PDO
-   */
-  private $connection;
-
-  /**
-   * Define a tabela e instancia e conexão
-   * @param string $table
-   */
-  public function __construct($table = null){
+  public function __construct($table = null) {
     $this->table = $table;
     $this->setConnection();
+  } 
+
+  private function setConnection() {
+
+
+      /* Get access to all database parameters */
+      $jsonFilePath = __DIR__ . '/db-credentials.json';
+
+      if (!file_exists($jsonFilePath))  {
+           die( __DIR__ . "\db-credentials.json file not found. Please, create it." );
+      }
+
+      $jsonContent = file_get_contents($jsonFilePath);
+      $dbParams = json_decode($jsonContent, true);
+      if ($dbParams === null) {
+          // Handle error if the JSON is invalid
+          die('Error decoding JSON file.');
+      }
+
+      $host = getenv('DB_HOST') ?: $dbParams['host'];
+      $dbname = getenv('DB_NAME') ?: $dbParams['dbname'];
+      $user = getenv('DB_USER') ?: $dbParams['user'];
+      $pass = getenv('DB_PASS') ?: $dbParams['pass'];
+
+      try {
+        $this->connection = new PDO("mysql:host=$host;dbname=$dbname", $user, $pass);
+        $this->connection->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+      } catch (PDOException $e) {
+        die('Database connection error: ' . $e->getMessage());
+      }
   }
 
-  /**
-   * Método responsável por criar uma conexão com o banco de dados
-   */
-  private function setConnection(){
-    try{
-      $this->connection = new PDO('mysql:host='.self::HOST.';dbname='.self::NAME,self::USER,self::PASS);
-      $this->connection->setAttribute(PDO::ATTR_ERRMODE,PDO::ERRMODE_EXCEPTION);
-    }catch(PDOException $e){
-      die('ERROR: '.$e->getMessage());
-    }
+  public function execute( $query, $params = [] )     {
+
+      try {
+          $statement = $this->connection->prepare($query);
+          $statement->execute( $params );
+
+          return $statement;
+      } catch (PDOException $e)   {
+          // echo "Akiki epa epa 222 " . $e->getCode() . " -- " . $e->getMessage();
+          die('SQL error: ' . $e->getMessage() );
+      }
   }
 
-  /**
-   * Método responsável por executar queries dentro do banco de dados
-   * @param  string $query
-   * @param  array  $params
-   * @return PDOStatement
-   */
-  public function execute($query,$params = []){
-    try{
-      $statement = $this->connection->prepare($query);
-      $statement->execute($params);
-      return $statement;
-    }catch(PDOException $e){
-      die('ERROR: '.$e->getMessage());
-    }
-  }
+  public function insert( $values )                 {
+      $fields = array_keys( $values );
+      $binds  = array_fill(0, count($fields), '?');
+      $query  = 'INSERT INTO ' . $this->table . ' (' . implode(',', $fields) . ') VALUES (' . implode(',', $binds) . ')';
+      
+      // echo "QUERY?!?! " . $query;
 
-  /**
-   * Método responsável por inserir dados no banco
-   * @param  array $values [ field => value ]
-   * @return integer ID inserido
-   */
-  public function insert($values){
-    //DADOS DA QUERY
-    $fields = array_keys($values);
-    $binds  = array_pad([],count($fields),'?');
+      $this->execute($query, array_values($values));
+      return $this->connection->lastInsertId();
+  } 
 
-    //MONTA A QUERY
-    $query = 'INSERT INTO '.$this->table.' ('.implode(',',$fields).') VALUES ('.implode(',',$binds).')';
+  public function select($where = '', $order = '', $limit = '', $fields = '*') {
+    $where = $where ? 'WHERE ' . $where : '';
+    $order = $order ? 'ORDER BY ' . $order : '';
+    $limit = $limit ? 'LIMIT ' . $limit : '';
+    $query = 'SELECT ' . $fields . ' FROM ' . $this->table . ' ' . $where . ' ' . $order . ' ' . $limit;
 
-    //EXECUTA O INSERT
-    $this->execute($query,array_values($values));
-
-    //RETORNA O ID INSERIDO
-    return $this->connection->lastInsertId();
-  }
-
-  /**
-   * Método responsável por executar uma consulta no banco
-   * @param  string $where
-   * @param  string $order
-   * @param  string $limit
-   * @param  string $fields
-   * @return PDOStatement
-   */
-  public function select($where = null, $order = null, $limit = null, $fields = '*'){
-    //DADOS DA QUERY
-    $where = strlen($where) ? 'WHERE '.$where : '';
-    $order = strlen($order) ? 'ORDER BY '.$order : '';
-    $limit = strlen($limit) ? 'LIMIT '.$limit : '';
-
-    //MONTA A QUERY
-    $query = 'SELECT '.$fields.' FROM '.$this->table.' '.$where.' '.$order.' '.$limit;
-
-    //EXECUTA A QUERY
+    // echo "<br>**QUERY?!? " . $query;
     return $this->execute($query);
   }
 
-  /**
-   * Método responsável por executar atualizações no banco de dados
-   * @param  string $where
-   * @param  array $values [ field => value ]
-   * @return boolean
-   */
-  public function update($where,$values){
-    //DADOS DA QUERY
+  public function selectJOIN($where = '', $order = '', $limit = '', $fields = '*', $joins = '') {
+    $where = $where ? 'WHERE ' . $where : '';
+    $order = $order ? 'ORDER BY ' . $order : '';
+    $limit = $limit ? 'LIMIT ' . $limit : '';
+    $query = 'SELECT ' . $fields . ' FROM ' . $this->table;
+    if ($joins) {
+      $query .= ' ' . $joins;
+    }
+    $query .= ' ' . $where . ' ' . $order . ' ' . $limit;
+    return $this->execute($query);
+  }
+
+  public function update($where, $values) {
     $fields = array_keys($values);
-
-    //MONTA A QUERY
-    $query = 'UPDATE '.$this->table.' SET '.implode('=?,',$fields).'=? WHERE '.$where;
-
-    //EXECUTAR A QUERY
-    $this->execute($query,array_values($values));
-
-    //RETORNA SUCESSO
+    $query = 'UPDATE ' . $this->table . ' SET ' . implode('=?,', $fields) . '=? WHERE ' . $where;
+    $this->execute($query, array_values($values));
     return true;
   }
 
-  /**
-   * Método responsável por excluir dados do banco
-   * @param  string $where
-   * @return boolean
-   */
-  public function delete($where){
-    //MONTA A QUERY
-    $query = 'DELETE FROM '.$this->table.' WHERE '.$where;
-
-    //EXECUTA A QUERY
+  public function delete($where) {
+    $query = 'DELETE FROM ' . $this->table . ' WHERE ' . $where;
     $this->execute($query);
-
-    //RETORNA SUCESSO
     return true;
   }
-
 }
